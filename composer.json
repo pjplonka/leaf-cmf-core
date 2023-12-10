@@ -1,0 +1,31 @@
+{
+    "name": "pjplonka/leaf-cmf-core",
+    "description": "Core package for LeafCMF",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Leaf\\Core\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Paweł Płonka",
+            "email": "pjplonka@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "nesbot/carbon": "^2.71",
+        "ramsey/uuid": "^4.7",
+        "symfony/validator": "^6.3"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*"
+    }
+}

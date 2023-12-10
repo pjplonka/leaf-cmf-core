@@ -1,0 +1,8 @@
+<?php declare(strict_types=1);
+
+namespace Leaf\Core\Application\Common\Event;
+
+interface EventDispatcher
+{
+    public function dispatch(Event $event) : void;
+}

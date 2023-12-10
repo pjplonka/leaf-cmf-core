@@ -1,0 +1,10 @@
+version: '3.7'
+services:
+  composer:
+    image: composer/composer
+    volumes:
+      - $PWD:/app
+  phpunit:
+    image: jitesoft/phpunit
+    volumes:
+      - $PWD:/app
