@@ -21,9 +21,9 @@
     ],
     "require": {
         "php": "^8.2",
-        "nesbot/carbon": "^2.71",
-        "ramsey/uuid": "^4.7",
-        "symfony/validator": "^6.3"
+        "nesbot/carbon": "*",
+        "ramsey/uuid": "*",
+        "symfony/validator": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "*"
