@@ -3,54 +3,48 @@
 namespace Tests\Application;
 
 use Carbon\CarbonImmutable;
-use Leaf\Core\Application\Common\Event\InMemoryEventDispatcher;
 use Leaf\Core\Application\Common\Exception\ConfigurationNotFoundException;
+use Leaf\Core\Application\Common\Exception\ValidationFailedException;
 use Leaf\Core\Application\Common\FieldDTO;
-use Leaf\Core\Application\Common\Result\Success;
-use Leaf\Core\Application\Common\Result\ValidationFailed;
 use Leaf\Core\Application\CreateElement\CreateElementCommand;
 use Leaf\Core\Application\CreateElement\ElementCreated;
 use Leaf\Core\Core\Element\Field\DateField;
 use Leaf\Core\Core\Element\Field\StringField;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
-use Tests\Doubles\ElementsSpy;
-use Tests\Mother\CreateElementHandlerMother;
+use Tests\Mother\ContainerMother;
 
 final class CreateElementHandlerTest extends TestCase
 {
     /** @test */
     public function configuration_can_not_be_found(): void
     {
-        $command = new CreateElementCommand('products', Uuid::uuid4(), new FieldDTO('color', 'red'));
+        $container = ContainerMother::withThrowingConfigurationProvider();
 
-        $handler = CreateElementHandlerMother::withThrowingConfigurationProvider();
+        $command = new CreateElementCommand('products', Uuid::uuid4(), new FieldDTO('color', 'red'));
 
         $this->expectException(ConfigurationNotFoundException::class);
 
-        $handler($command);
+        $container->bus->handle($command);
     }
 
     /** @test */
     public function validation_failed(): void
     {
+        $container = ContainerMother::basic();
+
         $command = new CreateElementCommand('products', Uuid::uuid4(), new FieldDTO('color', 'red'));
 
-        $handler = CreateElementHandlerMother::basic();
+        $this->expectException(ValidationFailedException::class);
 
-        $result = $handler($command);
-
-        $this->assertInstanceOf(ValidationFailed::class, $result);
-        $this->assertSame([
-            'name' => ['This field is missing.'],
-            'created_at' => ['This field is missing.'],
-        ], $result->simplify());
-
+        $container->bus->handle($command);
     }
 
     /** @test */
     public function element_is_stored(): void
     {
+        $container = ContainerMother::basic();
+
         $command = new CreateElementCommand(
             $groupName = 'products',
             $uuid = Uuid::uuid4(),
@@ -59,16 +53,13 @@ final class CreateElementHandlerTest extends TestCase
             new FieldDTO('created_at', '10.10.2020')
         );
 
-        $elements = ElementsSpy::create();
-        $handler = CreateElementHandlerMother::withCustomElements($elements);
+        $container->bus->handle($command);
 
-        $result = $handler($command);
-
-        $this->assertInstanceOf(Success::class, $result);
-        $this->assertSame(1, $elements->saveCounter);
+        $elements = $container->elements;
+        $this->assertCount(1, $elements->elements);
 
         // Elements
-        $element = $elements->storedElement;
+        $element = $elements->find($uuid);
         $this->assertSame($uuid, $element->uuid);
         $this->assertSame($groupName, $element->group);
         $this->assertCount(3, $element->getFields());
@@ -90,6 +81,8 @@ final class CreateElementHandlerTest extends TestCase
     /** @test */
     public function event_is_dispatched(): void
     {
+        $container = ContainerMother::basic();
+
         $groupName = 'products';
         $command = new CreateElementCommand($groupName,
             $uuid = Uuid::uuid4(),
@@ -98,12 +91,10 @@ final class CreateElementHandlerTest extends TestCase
             new FieldDTO('created_at', '10.10.2020')
         );
 
-        $dispatcher = new InMemoryEventDispatcher();
-        $handler = CreateElementHandlerMother::withCustomEventDispatcher($dispatcher);
-
-        $result = $handler($command);
-
-        $this->assertInstanceOf(Success::class, $result);
+        $container->bus->handle($command);
+        
+        $dispatcher = $container->dispatcher;
+        
         $this->assertCount(1, $dispatcher->events);
         $this->assertInstanceOf(ElementCreated::class, $dispatcher->events[0]);
         $this->assertSame($uuid, $dispatcher->events[0]->element->uuid);

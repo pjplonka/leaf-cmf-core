@@ -2,10 +2,11 @@
 
 namespace Leaf\Core\Application\UpdateElement;
 
+use Leaf\Core\Application\Common\Command\Command;
 use Leaf\Core\Application\Common\FieldDTO;
 use Ramsey\Uuid\UuidInterface;
 
-final readonly class UpdateElementCommand
+final readonly class UpdateElementCommand implements Command
 {
     /** @var FieldDTO[]  */
     public array $fields;

@@ -3,12 +3,10 @@
 namespace Tests\Application;
 
 use Carbon\CarbonImmutable;
-use Leaf\Core\Application\Common\Event\InMemoryEventDispatcher;
 use Leaf\Core\Application\Common\Exception\ConfigurationNotFoundException;
+use Leaf\Core\Application\Common\Exception\ElementNotFoundException;
+use Leaf\Core\Application\Common\Exception\ValidationFailedException;
 use Leaf\Core\Application\Common\FieldDTO;
-use Leaf\Core\Application\Common\Result\ElementNotFound;
-use Leaf\Core\Application\Common\Result\Success;
-use Leaf\Core\Application\Common\Result\ValidationFailed;
 use Leaf\Core\Application\UpdateElement\ElementUpdated;
 use Leaf\Core\Application\UpdateElement\UpdateElementCommand;
 use Leaf\Core\Core\Element\Element;
@@ -16,65 +14,62 @@ use Leaf\Core\Core\Element\Field\DateField;
 use Leaf\Core\Core\Element\Field\StringField;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
-use Tests\Doubles\ElementsSpy;
-use Tests\Mother\UpdateElementHandlerMother;
+use Tests\Mother\ContainerMother;
 
 final class UpdateElementHandlerTest extends TestCase
 {
     /** @test */
     public function element_can_not_be_found(): void
     {
+        $container = ContainerMother::basic();
+
         $command = new UpdateElementCommand(Uuid::uuid4(), new FieldDTO('color', 'red'));
 
-        $handler = UpdateElementHandlerMother::basic(ElementsSpy::create());
+        $this->expectException(ElementNotFoundException::class);
 
-        $result = $handler($command);
-
-        $this->assertInstanceOf(ElementNotFound::class, $result);
+        $container->bus->handle($command);
     }
 
     /** @test */
     public function configuration_can_not_be_found(): void
     {
+        $container = ContainerMother::withThrowingConfigurationProvider();
+
         $uuid = Uuid::uuid4();
-        $elements = ElementsSpy::createWithFoundElement(new Element($uuid, 'products'));
+
+        $container->elements->save(new Element($uuid, 'products'));
 
         $command = new UpdateElementCommand($uuid, new FieldDTO('color', 'red'));
-
-        $handler = UpdateElementHandlerMother::withThrowingConfigurationProvider($elements);
 
         $this->expectException(ConfigurationNotFoundException::class);
 
-        $handler($command);
+        $container->bus->handle($command);
     }
 
     /** @test */
-    public function validation_failed2(): void
+    public function validation_failed(): void
     {
+        $container = ContainerMother::basic();
+
         $uuid = Uuid::uuid4();
-        $elements = ElementsSpy::createWithFoundElement(new Element($uuid, 'products'));
+
+        $container->elements->save(new Element($uuid, 'products'));
 
         $command = new UpdateElementCommand($uuid, new FieldDTO('color', 'red'));
 
-        $handler = UpdateElementHandlerMother::basic($elements);
+        $this->expectException(ValidationFailedException::class);
 
-        $result = $handler($command);
-
-        $this->assertInstanceOf(ValidationFailed::class, $result);
-        $this->assertSame([
-            'name' => ['This field is missing.'],
-            'created_at' => ['This field is missing.'],
-        ], $result->simplify());
-
+        $container->bus->handle($command);
     }
 
     /** @test */
     public function updated_element_is_stored(): void
     {
+        $container = ContainerMother::basic();
+
         $uuid = Uuid::uuid4();
-        $elements = ElementsSpy::createWithFoundElement(
-            new Element($uuid, 'products', new StringField('name', 'Annie'))
-        );
+
+        $container->elements->save(new Element($uuid, 'products', new StringField('name', 'Annie')));
 
         $command = new UpdateElementCommand(
             $uuid,
@@ -83,16 +78,13 @@ final class UpdateElementHandlerTest extends TestCase
             new FieldDTO('created_at', '10.10.2020')
         );
 
-        $handler = UpdateElementHandlerMother::basic($elements);
+        $container->bus->handle($command);
 
-        $result = $handler($command);
-
-        $this->assertInstanceOf(Success::class, $result);
-        $this->assertSame(1, $elements->saveCounter);
-        $this->assertSame(1, $elements->findCounter);
+        $elements = $container->elements;
 
         // Elements
-        $element = $elements->storedElement;
+        $element = reset($elements->elements);
+        $this->assertCount(1, $elements->elements);
         $this->assertSame($uuid, $element->uuid);
         $this->assertSame('products', $element->group);
         $this->assertCount(3, $element->getFields());
@@ -114,8 +106,11 @@ final class UpdateElementHandlerTest extends TestCase
     /** @test */
     public function event_is_dispatched(): void
     {
+        $container = ContainerMother::basic();
+
         $uuid = Uuid::uuid4();
-        $elements = ElementsSpy::createWithFoundElement(new Element($uuid, 'products'));
+
+        $container->elements->save(new Element($uuid, 'products'));
 
         $command = new UpdateElementCommand(
             $uuid,
@@ -124,12 +119,10 @@ final class UpdateElementHandlerTest extends TestCase
             new FieldDTO('created_at', '10.10.2020')
         );
 
-        $dispatcher = new InMemoryEventDispatcher();
-        $handler = UpdateElementHandlerMother::withCustomEventDispatcher($elements, $dispatcher);
+        $container->bus->handle($command);
 
-        $result = $handler($command);
+        $dispatcher = $container->dispatcher;
 
-        $this->assertInstanceOf(Success::class, $result);
         $this->assertCount(1, $dispatcher->events);
         $this->assertInstanceOf(ElementUpdated::class, $dispatcher->events[0]);
         $this->assertSame($uuid, $dispatcher->events[0]->element->uuid);

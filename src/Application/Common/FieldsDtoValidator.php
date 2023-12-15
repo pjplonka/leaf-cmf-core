@@ -2,9 +2,9 @@
 
 namespace Leaf\Core\Application\Common;
 
+use Leaf\Core\Application\Common\Exception\ValidationFailedException;
 use Leaf\Core\Core\Configuration\Configuration;
 use Symfony\Component\Validator\Constraints\Collection;
-use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 readonly final class FieldsDtoValidator
@@ -13,12 +13,17 @@ readonly final class FieldsDtoValidator
     {
     }
 
-    public function validate(Configuration $configuration, FieldDTO ...$fields): ConstraintViolationListInterface
+    /** @throws ValidationFailedException */
+    public function validate(Configuration $configuration, FieldDTO ...$fields): void
     {
-        return $this->validator->validate(
+        $violations = $this->validator->validate(
             $this->transformCommandFieldsToArrayForValidation(...$fields),
             new Collection(['fields' => $configuration->getConstraints()->get()])
         );
+
+        if (0 !== $violations->count()) {
+            throw new ValidationFailedException($violations);
+        }
     }
 
     private function transformCommandFieldsToArrayForValidation(FieldDTO ...$fields): array

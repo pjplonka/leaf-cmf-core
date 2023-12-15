@@ -1,4 +1,8 @@
 ## Assumptions
+Interfaces:
+- ConfigurationProvider
+- Elements (Element Repository)
+- EventDispatcher
 
 ### Packages
 - [Symfony validator](https://symfony.com/doc/current/components/validator.html) is required and can not be replaced.   
@@ -18,7 +22,6 @@ Require composer package:
 like `is_string` or `max_length=200`) and for element (e.g. field name cannot be duplicated)
 - configuration validator + ConfigurationIsInvalidException 
 - encryption for field on demand (in configuration)
-- event dispatcher interface
 - element `name` property should be changed to something like group, band or something
 - every field should have own constraints instead of holding it in configuration array (and configuration can hold additional constraints)
 - add some TestField to use it in tests to not use real field
@@ -27,4 +30,6 @@ like `is_string` or `max_length=200`) and for element (e.g. field name cannot be
 - write more about makefile in readme
 - fields should contain basic constraints (eg. string must be string and max length is 255)
 - FieldsDtoValidator: rename this class + validate configuration field type (type can be invalid e.g. not exist)
-- 
+- FieldsDtoValidator should be a default one for usage
+- transactional manager interface?
+- add assertion class
