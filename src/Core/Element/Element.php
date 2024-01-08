@@ -5,14 +5,14 @@ namespace Leaf\Core\Core\Element;
 use Leaf\Core\Core\Element\Field\Field;
 use Leaf\Core\Core\Exception\FieldAlreadyExistException;
 use Leaf\Core\Core\Exception\FieldNotFoundException;
-use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Uid\Uuid;
 
 final class Element
 {
     /** @var Field[] */
     private array $fields;
 
-    public function __construct(public readonly UuidInterface $uuid, public readonly string $group, Field ...$fields)
+    public function __construct(public readonly Uuid $uuid, public readonly string $group, Field ...$fields)
     {
         $this->fields = $fields;
     }

@@ -11,7 +11,7 @@ use Leaf\Core\Application\CreateElement\ElementCreated;
 use Leaf\Core\Core\Element\Field\DateField;
 use Leaf\Core\Core\Element\Field\StringField;
 use PHPUnit\Framework\TestCase;
-use Ramsey\Uuid\Uuid;
+use Symfony\Component\Uid\Uuid;
 use Tests\Mother\ContainerMother;
 
 final class CreateElementHandlerTest extends TestCase
@@ -21,7 +21,7 @@ final class CreateElementHandlerTest extends TestCase
     {
         $container = ContainerMother::withThrowingConfigurationProvider();
 
-        $command = new CreateElementCommand('products', Uuid::uuid4(), new FieldDTO('color', 'red'));
+        $command = new CreateElementCommand('products', Uuid::v4(), new FieldDTO('color', 'red'));
 
         $this->expectException(ConfigurationNotFoundException::class);
 
@@ -33,7 +33,7 @@ final class CreateElementHandlerTest extends TestCase
     {
         $container = ContainerMother::basic();
 
-        $command = new CreateElementCommand('products', Uuid::uuid4(), new FieldDTO('color', 'red'));
+        $command = new CreateElementCommand('products', Uuid::v4(), new FieldDTO('color', 'red'));
 
         $this->expectException(ValidationFailedException::class);
 
@@ -47,7 +47,7 @@ final class CreateElementHandlerTest extends TestCase
 
         $command = new CreateElementCommand(
             $groupName = 'products',
-            $uuid = Uuid::uuid4(),
+            $uuid = Uuid::v4(),
             new FieldDTO('name', 'John'),
             new FieldDTO('color', 'red'),
             new FieldDTO('created_at', '10.10.2020')
@@ -85,7 +85,7 @@ final class CreateElementHandlerTest extends TestCase
 
         $groupName = 'products';
         $command = new CreateElementCommand($groupName,
-            $uuid = Uuid::uuid4(),
+            $uuid = Uuid::v4(),
             new FieldDTO('name', 'john'),
             new FieldDTO('color', 'red'),
             new FieldDTO('created_at', '10.10.2020')

@@ -2,11 +2,11 @@
 
 namespace Leaf\Core\Core\Element;
 
-use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Uid\Uuid;
 
 interface Elements
 {
     public function save(Element $element): void;
 
-    public function find(UuidInterface $uuid): ?Element;
+    public function find(Uuid $uuid): ?Element;
 }

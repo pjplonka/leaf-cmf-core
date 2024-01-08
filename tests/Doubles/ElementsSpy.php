@@ -4,7 +4,7 @@ namespace Tests\Doubles;
 
 use Leaf\Core\Core\Element\Element;
 use Leaf\Core\Core\Element\Elements;
-use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Uid\Uuid;
 
 final class ElementsSpy implements Elements
 {
@@ -33,7 +33,7 @@ final class ElementsSpy implements Elements
         $this->storedElement = $element;
     }
 
-    public function find(UuidInterface $uuid): ?Element
+    public function find(Uuid $uuid): ?Element
     {
         $this->findCounter++;
 

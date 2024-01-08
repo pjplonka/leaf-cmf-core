@@ -13,7 +13,7 @@ use Leaf\Core\Core\Element\Element;
 use Leaf\Core\Core\Element\Field\DateField;
 use Leaf\Core\Core\Element\Field\StringField;
 use PHPUnit\Framework\TestCase;
-use Ramsey\Uuid\Uuid;
+use Symfony\Component\Uid\Uuid;
 use Tests\Mother\ContainerMother;
 
 final class UpdateElementHandlerTest extends TestCase
@@ -23,7 +23,7 @@ final class UpdateElementHandlerTest extends TestCase
     {
         $container = ContainerMother::basic();
 
-        $command = new UpdateElementCommand(Uuid::uuid4(), new FieldDTO('color', 'red'));
+        $command = new UpdateElementCommand(Uuid::v4(), new FieldDTO('color', 'red'));
 
         $this->expectException(ElementNotFoundException::class);
 
@@ -35,7 +35,7 @@ final class UpdateElementHandlerTest extends TestCase
     {
         $container = ContainerMother::withThrowingConfigurationProvider();
 
-        $uuid = Uuid::uuid4();
+        $uuid = Uuid::v4();
 
         $container->elements->save(new Element($uuid, 'products'));
 
@@ -51,7 +51,7 @@ final class UpdateElementHandlerTest extends TestCase
     {
         $container = ContainerMother::basic();
 
-        $uuid = Uuid::uuid4();
+        $uuid = Uuid::v4();
 
         $container->elements->save(new Element($uuid, 'products'));
 
@@ -67,7 +67,7 @@ final class UpdateElementHandlerTest extends TestCase
     {
         $container = ContainerMother::basic();
 
-        $uuid = Uuid::uuid4();
+        $uuid = Uuid::v4();
 
         $container->elements->save(new Element($uuid, 'products', new StringField('name', 'Annie')));
 
@@ -108,7 +108,7 @@ final class UpdateElementHandlerTest extends TestCase
     {
         $container = ContainerMother::basic();
 
-        $uuid = Uuid::uuid4();
+        $uuid = Uuid::v4();
 
         $container->elements->save(new Element($uuid, 'products'));
 
