@@ -2,11 +2,11 @@
 
 namespace Leaf\Core\Core\Element\Field;
 
-use Carbon\CarbonImmutable;
+use DateTimeImmutable;
 
 readonly class DateTimeField extends Field
 {
-    public function __construct(private string $name, private CarbonImmutable $value)
+    public function __construct(private string $name, private DateTimeImmutable $value)
     {
     }
 
@@ -25,7 +25,7 @@ readonly class DateTimeField extends Field
         return $this->name;
     }
 
-    public function getValue(): CarbonImmutable
+    public function getValue(): DateTimeImmutable
     {
         return $this->value;
     }

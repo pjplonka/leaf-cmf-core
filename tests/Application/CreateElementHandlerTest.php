@@ -2,7 +2,7 @@
 
 namespace Tests\Application;
 
-use Carbon\CarbonImmutable;
+use DateTimeImmutable;
 use Leaf\Core\Application\Common\Exception\ConfigurationNotFoundException;
 use Leaf\Core\Application\Common\Exception\ValidationFailedException;
 use Leaf\Core\Application\Common\FieldDTO;
@@ -74,7 +74,7 @@ final class CreateElementHandlerTest extends TestCase
         $this->assertSame('red', $fields[1]->getValue());
         $this->assertInstanceOf(DateField::class, $fields[2]);
         $this->assertSame('created_at', $fields[2]->getName());
-        $this->assertInstanceOf(CarbonImmutable::class, $fields[2]->getValue());
+        $this->assertInstanceOf(DateTimeImmutable::class, $fields[2]->getValue());
         $this->assertSame('10.10.2020', $fields[2]->getValue()->format('d.m.Y'));
     }
 

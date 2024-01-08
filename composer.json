@@ -21,7 +21,6 @@
     ],
     "require": {
         "php": "^8.2",
-        "nesbot/carbon": "*",
         "symfony/validator": "*",
         "symfony/uid": "*"
     },

@@ -2,7 +2,7 @@
 
 namespace Leaf\Core\Core\Element\Field;
 
-use Carbon\CarbonImmutable;
+use DateTimeImmutable;
 use UnexpectedValueException;
 
 class FieldFactory
@@ -11,8 +11,8 @@ class FieldFactory
     {
         return match ($type) {
             StringField::getType() => new StringField($name, $value),
-            DateField::getType() => new DateField($name, new CarbonImmutable($value)),
-            DateTimeField::getType() => new DateTimeField($name, new CarbonImmutable($value)),
+            DateField::getType() => new DateField($name, new DateTimeImmutable($value)),
+            DateTimeField::getType() => new DateTimeField($name, new DateTimeImmutable($value)),
             default => throw new UnexpectedValueException(sprintf('Can not create field by type `%s`.', $type))
         };
     }
