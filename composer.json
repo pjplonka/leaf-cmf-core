@@ -25,6 +25,7 @@
         "symfony/uid": "*"
     },
     "require-dev": {
-        "phpunit/phpunit": "*"
+        "phpunit/phpunit": "*",
+        "phpstan/phpstan": "^1.10"
     }
 }

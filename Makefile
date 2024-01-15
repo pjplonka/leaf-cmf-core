@@ -11,3 +11,6 @@ tests\:run:
 	@if [ $(f) ]; then\
 	 docker-compose run phpunit ./vendor/bin/phpunit --filter $(f); else\
 	 docker-compose run phpunit ./vendor/bin/phpunit; fi
+
+stan:
+	vendor/bin/phpstan analyse
