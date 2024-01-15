@@ -24,7 +24,6 @@ like `is_string` or `max_length=200`) and for element (e.g. field name cannot be
 - element `name` property should be changed to something like group, band or something
 - every field should have own constraints instead of holding it in configuration array (and configuration can hold additional constraints)
 - add some TestField to use it in tests to not use real field
-- add command bus and use it in tests
 - what about read model? do we need any bus for it?
 - write more about makefile in readme
 - fields should contain basic constraints (eg. string must be string and max length is 255)
