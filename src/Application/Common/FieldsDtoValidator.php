@@ -18,7 +18,7 @@ readonly final class FieldsDtoValidator
     {
         $violations = $this->validator->validate(
             $this->transformCommandFieldsToArrayForValidation(...$fields),
-            new Collection(['fields' => $configuration->getConstraints()->get()])
+            new Collection(['fields' => $configuration->getConstraints()->get(), 'allowMissingFields' => true])
         );
 
         if (0 !== $violations->count()) {
