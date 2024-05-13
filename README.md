@@ -31,3 +31,5 @@ like `is_string` or `max_length=200`) and for element (e.g. field name cannot be
 - FieldsDtoValidator should be a default one for usage
 - transactional manager interface?
 - add assertion class
+- validation failed exception could be used form symfony package
+- test for empty constraints (allowMissingFields) is set to true
