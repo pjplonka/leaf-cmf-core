@@ -13,8 +13,21 @@ All validation rules must be provided from [Symfony Validator Constraints list](
 ## Makefile
 
 ### Examples:  
+
+#### Composer
+Install composer packages:  
+`make composer:install`
+
 Require composer package:  
 `make composer:require p=symfony/validator`
+
+#### Tests
+`make tests:run`  
+or with filter:  
+`make tests:run f=CreateElementHandlerTest`
+
+#### Stan
+`make stan`
 
 ## TODO:  
 - Add assertions to every field type (e.g. StringType must contain StringValue which checks base validation rules
@@ -33,3 +46,4 @@ like `is_string` or `max_length=200`) and for element (e.g. field name cannot be
 - add assertion class
 - validation failed exception could be used form symfony package
 - test for empty constraints (allowMissingFields) is set to true
+- when tests are run in docker it creates container and it is not reusable (every time make run:tests is run, new container is created)

@@ -33,7 +33,7 @@ final class CreateElementHandlerTest extends TestCase
     {
         $container = ContainerMother::basic();
 
-        $command = new CreateElementCommand('products', Uuid::v4(), new FieldDTO('color', 'red'));
+        $command = new CreateElementCommand('products', Uuid::v4(), new FieldDTO('color', [1, 2]));
 
         $this->expectException(ValidationFailedException::class);
 
@@ -50,7 +50,8 @@ final class CreateElementHandlerTest extends TestCase
             $uuid = Uuid::v4(),
             new FieldDTO('name', 'John'),
             new FieldDTO('color', 'red'),
-            new FieldDTO('created_at', '10.10.2020')
+            new FieldDTO('created_at', '10.10.2020'),
+            new FieldDTO('categories', 'ee953595-dc72-456f-bc7f-7ea275a01537'),
         );
 
         $container->bus->handle($command);
@@ -62,7 +63,7 @@ final class CreateElementHandlerTest extends TestCase
         $element = $elements->find($uuid);
         $this->assertSame($uuid, $element->uuid);
         $this->assertSame($groupName, $element->group);
-        $this->assertCount(3, $element->getFields());
+        $this->assertCount(4, $element->getFields());
 
         // Fields - Check if fields were created properly
         $fields = $element->getFields();
@@ -76,6 +77,9 @@ final class CreateElementHandlerTest extends TestCase
         $this->assertSame('created_at', $fields[2]->getName());
         $this->assertInstanceOf(DateTimeImmutable::class, $fields[2]->getValue());
         $this->assertSame('10.10.2020', $fields[2]->getValue()->format('d.m.Y'));
+        $this->assertSame('categories', $fields[3]->getName());
+        $this->assertInstanceOf(Uuid::class, $fields[3]->getValue());
+        $this->assertSame('ee953595-dc72-456f-bc7f-7ea275a01537', (string)$fields[3]->getValue());
     }
 
     /** @test */

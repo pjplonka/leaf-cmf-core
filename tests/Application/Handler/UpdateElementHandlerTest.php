@@ -11,6 +11,7 @@ use Leaf\Core\Application\UpdateElement\ElementUpdated;
 use Leaf\Core\Application\UpdateElement\UpdateElementCommand;
 use Leaf\Core\Core\Element\Element;
 use Leaf\Core\Core\Element\Field\DateField;
+use Leaf\Core\Core\Element\Field\ParentField;
 use Leaf\Core\Core\Element\Field\StringField;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Uid\Uuid;
@@ -55,7 +56,7 @@ final class UpdateElementHandlerTest extends TestCase
 
         $container->elements->save(new Element($uuid, 'products'));
 
-        $command = new UpdateElementCommand($uuid, new FieldDTO('color', 'red'));
+        $command = new UpdateElementCommand($uuid, new FieldDTO('color', [1, 2]));
 
         $this->expectException(ValidationFailedException::class);
 
@@ -63,19 +64,26 @@ final class UpdateElementHandlerTest extends TestCase
     }
 
     /** @test */
-    public function updated_element_is_stored(): void
+    public function element_fields_can_be_updated(): void
     {
         $container = ContainerMother::basic();
 
         $uuid = Uuid::v4();
 
-        $container->elements->save(new Element($uuid, 'products', new StringField('name', 'Annie')));
+        $container->elements->save(
+            new Element(
+                $uuid,
+                'products',
+                new StringField('name', 'Annie'),
+                new ParentField('categories', Uuid::fromString('ee953595-dc72-456f-bc7f-7ea275a01537')))
+        );
 
         $command = new UpdateElementCommand(
             $uuid,
             new FieldDTO('name', 'John'),
             new FieldDTO('color', 'red'),
-            new FieldDTO('created_at', '10.10.2020')
+            new FieldDTO('created_at', '10.10.2020'),
+            new FieldDTO('categories', '9b65c74b-54ec-4baa-86ac-a4a8c7f7426f'),
         );
 
         $container->bus->handle($command);
@@ -87,7 +95,7 @@ final class UpdateElementHandlerTest extends TestCase
         $this->assertCount(1, $elements->elements);
         $this->assertSame($uuid, $element->uuid);
         $this->assertSame('products', $element->group);
-        $this->assertCount(3, $element->getFields());
+        $this->assertCount(4, $element->getFields());
 
         // Fields - Check if fields were created properly
         $fields = $element->getFields();
@@ -101,6 +109,9 @@ final class UpdateElementHandlerTest extends TestCase
         $this->assertSame('created_at', $fields[2]->getName());
         $this->assertInstanceOf(DateTimeImmutable::class, $fields[2]->getValue());
         $this->assertSame('10.10.2020', $fields[2]->getValue()->format('d.m.Y'));
+        $this->assertSame('categories', $fields[3]->getName());
+        $this->assertInstanceOf(Uuid::class, $fields[3]->getValue());
+        $this->assertSame('9b65c74b-54ec-4baa-86ac-a4a8c7f7426f', (string)$fields[3]->getValue());
     }
 
     /** @test */

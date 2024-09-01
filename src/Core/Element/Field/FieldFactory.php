@@ -3,6 +3,7 @@
 namespace Leaf\Core\Core\Element\Field;
 
 use DateTimeImmutable;
+use Symfony\Component\Uid\Uuid;
 use UnexpectedValueException;
 
 class FieldFactory
@@ -13,6 +14,7 @@ class FieldFactory
             StringField::getType() => new StringField($name, $value),
             DateField::getType() => new DateField($name, new DateTimeImmutable($value)),
             DateTimeField::getType() => new DateTimeField($name, new DateTimeImmutable($value)),
+            ParentField::getType() => new ParentField($name, Uuid::fromString($value)),
             default => throw new UnexpectedValueException(sprintf('Can not create field by type `%s`.', $type))
         };
     }
