@@ -13,13 +13,14 @@ use Leaf\Core\Core\Element\Element;
 use Leaf\Core\Core\Element\Field\DateField;
 use Leaf\Core\Core\Element\Field\ParentField;
 use Leaf\Core\Core\Element\Field\StringField;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Uid\Uuid;
 use Tests\Mother\ContainerMother;
 
 final class UpdateElementHandlerTest extends TestCase
 {
-    /** @test */
+    #[Test]
     public function element_can_not_be_found(): void
     {
         $container = ContainerMother::basic();
@@ -31,7 +32,7 @@ final class UpdateElementHandlerTest extends TestCase
         $container->bus->handle($command);
     }
 
-    /** @test */
+    #[Test]
     public function configuration_can_not_be_found(): void
     {
         $container = ContainerMother::withThrowingConfigurationProvider();
@@ -47,7 +48,7 @@ final class UpdateElementHandlerTest extends TestCase
         $container->bus->handle($command);
     }
 
-    /** @test */
+    #[Test]
     public function validation_failed(): void
     {
         $container = ContainerMother::basic();
@@ -63,7 +64,7 @@ final class UpdateElementHandlerTest extends TestCase
         $container->bus->handle($command);
     }
 
-    /** @test */
+    #[Test]
     public function element_fields_can_be_updated(): void
     {
         $container = ContainerMother::basic();
@@ -114,7 +115,7 @@ final class UpdateElementHandlerTest extends TestCase
         $this->assertSame('9b65c74b-54ec-4baa-86ac-a4a8c7f7426f', (string)$fields[3]->getValue());
     }
 
-    /** @test */
+    #[Test]
     public function event_is_dispatched(): void
     {
         $container = ContainerMother::basic();

@@ -21,11 +21,11 @@
     ],
     "require": {
         "php": "^8.2",
-        "symfony/validator": "*",
-        "symfony/uid": "*"
+        "symfony/validator": "^7",
+        "symfony/uid": "^7"
     },
     "require-dev": {
-        "phpunit/phpunit": "*",
-        "phpstan/phpstan": "^1.10"
+        "phpunit/phpunit": "^12",
+        "phpstan/phpstan": "^1"
     }
 }

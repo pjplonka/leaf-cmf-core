@@ -7,12 +7,13 @@ use Leaf\Core\Application\Common\Serializer\SimpleSerializer;
 use Leaf\Core\Core\Element\Element;
 use Leaf\Core\Core\Element\Field\DateTimeField;
 use Leaf\Core\Core\Element\Field\StringField;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Uid\Uuid;
 
 class SimpleSerializerTest extends TestCase
 {
-    /** @test */
+    #[Test]
     public function serialize(): void
     {
         $element = new Element(
