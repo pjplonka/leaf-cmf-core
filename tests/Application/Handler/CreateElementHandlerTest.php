@@ -10,13 +10,14 @@ use Leaf\Core\Application\CreateElement\CreateElementCommand;
 use Leaf\Core\Application\CreateElement\ElementCreated;
 use Leaf\Core\Core\Element\Field\DateField;
 use Leaf\Core\Core\Element\Field\StringField;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Uid\Uuid;
 use Tests\Mother\ContainerMother;
 
 final class CreateElementHandlerTest extends TestCase
 {
-    /** @test */
+    #[Test]
     public function configuration_can_not_be_found(): void
     {
         $container = ContainerMother::withThrowingConfigurationProvider();
@@ -28,7 +29,7 @@ final class CreateElementHandlerTest extends TestCase
         $container->bus->handle($command);
     }
 
-    /** @test */
+    #[Test]
     public function validation_failed(): void
     {
         $container = ContainerMother::basic();
@@ -40,7 +41,7 @@ final class CreateElementHandlerTest extends TestCase
         $container->bus->handle($command);
     }
 
-    /** @test */
+    #[Test]
     public function element_is_stored(): void
     {
         $container = ContainerMother::basic();
@@ -82,7 +83,7 @@ final class CreateElementHandlerTest extends TestCase
         $this->assertSame('ee953595-dc72-456f-bc7f-7ea275a01537', (string)$fields[3]->getValue());
     }
 
-    /** @test */
+    #[Test]
     public function event_is_dispatched(): void
     {
         $container = ContainerMother::basic();

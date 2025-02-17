@@ -2,6 +2,7 @@
 
 namespace Tests\Core;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Constraints\Choice;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -11,13 +12,13 @@ use UnexpectedValueException;
 
 final class ConfigurationTest extends TestCase
 {
-    /** @test */
+    #[Test]
     public function has_a_name(): void
     {
         $this->assertSame('products', ConfigurationMother::create()->name);
     }
 
-    /** @test */
+    #[Test]
     public function returns_fields_constraints(): void
     {
         $configuration = ConfigurationMother::create();
@@ -32,13 +33,13 @@ final class ConfigurationTest extends TestCase
         $this->assertInstanceOf(Choice::class, $constraints['color'][1]);
     }
 
-    /** @test */
+    #[Test]
     public function returns_type_for_existing_name(): void
     {
         $this->assertSame('string', ConfigurationMother::create()->getTypeFor('color'));
     }
 
-    /** @test */
+    #[Test]
     public function returns_type_for_not_existing_name(): void
     {
         $this->expectException(UnexpectedValueException::class);
